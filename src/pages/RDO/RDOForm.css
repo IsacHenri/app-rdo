@@ -1,0 +1,171 @@
+/* RESET */
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f9;
+}
+
+/* CONTAINER */
+.rdo-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* SECTION */
+.section {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* TITULO */
+.section h2 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #333;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* FIELD */
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field.full {
+  grid-column: span 2;
+}
+
+/* INPUTS */
+input, select, textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* BOTÕES */
+button {
+  cursor: pointer;
+}
+
+.btn-save {
+  background: #28a745;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+/* ADD */
+.btn-add {
+  margin-top: 10px;
+  padding: 8px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+/* DELETE */
+.row-del {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* CLIMA / TAGS */
+.weather-row,
+.ocorrencia-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.weather-tag,
+.oc-tag {
+  background: #e9ecef;
+  padding: 6px 10px;
+  border-radius: 20px;
+}
+
+/* TABELA */
+.mao-obra-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mao-obra-table th {
+  background: #f1f1f1;
+  padding: 8px;
+}
+
+.mao-obra-table td {
+  padding: 6px;
+}
+
+/* MAPA */
+.map-container {
+  height: 300px;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+/* FOTO */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.photo-card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .field.full {
+    grid-column: span 1;
+  }
+
+  .map-container {
+    height: 220px;
+  }
+}
