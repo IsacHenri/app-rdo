@@ -1,7 +1,7 @@
 export default function Observacoes({ form, updateField }) {
   return (
     <div className="section">
-      <h2>8. Observações</h2>
+      <h2>9. Observações</h2>
 
       <textarea placeholder="Observações gerais"
         onChange={e => updateField("obsGerais", e.target.value)} />

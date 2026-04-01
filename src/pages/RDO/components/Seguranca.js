@@ -1,7 +1,7 @@
 export default function Seguranca({ form, updateField }) {
   return (
     <div className="section">
-      <h2>7. Segurança</h2>
+      <h2>8. Segurança</h2>
 
       <input placeholder="DDS"
         onChange={e => updateField("dds", e.target.value)} />

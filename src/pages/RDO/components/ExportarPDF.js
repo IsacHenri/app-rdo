@@ -1,45 +1,64 @@
 import jsPDF from "jspdf";
-import logo from "../../../assets/img/satel-logo.jpeg";
+import logo from "../../../assets/img/satel-logo.png";
 
 export default function ExportarPDF({ form }) {
 
   async function gerarPDF() {
 
-    const doc = new jsPDF();
+    const doc = new jsPDF("p", "mm", "a4");
+
     let y = 30;
     let page = 1;
 
+    const marginLeft = 15;
+    const marginRight = 195;
+
     // =========================
-    // HEADER (todas páginas)
+    // HEADER PROFISSIONAL
     // =========================
     function header() {
-      doc.addImage(logo, "JPEG", 10, 10, 25, 15);
 
-      doc.setFontSize(14);
+      // LOGO (proporcional)
+      doc.addImage(logo, "PNG", 15, 10, 30, 15);
+
+      // TÍTULO
       doc.setFont("helvetica", "bold");
-      doc.text("RELATÓRIO DIÁRIO DE OBRA (RDO)", 105, 18, { align: "center" });
+      doc.setFontSize(16);
+      doc.text("RELATÓRIO DIÁRIO DE OBRA", 105, 16, { align: "center" });
 
-      doc.setFontSize(9);
+      doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
-      doc.text(`Data: ${form.data || "-"}`, 160, 15);
+      doc.text("(RDO)", 105, 22, { align: "center" });
 
+      // DATA
+      doc.setFontSize(9);
+      doc.text(`Data: ${form.data || "-"}`, 195, 15, { align: "right" });
+
+      // LINHA
       doc.setLineWidth(0.5);
-      doc.line(10, 25, 200, 25);
+      doc.line(marginLeft, 26, marginRight, 26);
 
-      y = 30;
+      y = 32;
     }
 
     // =========================
-    // FOOTER (todas páginas)
+    // FOOTER PROFISSIONAL
     // =========================
     function footer() {
+
+      doc.setLineWidth(0.3);
+      doc.line(marginLeft, 285, marginRight, 285);
+
       doc.setFontSize(9);
+
+      // Página central
       doc.text(`Página ${page}`, 105, 290, { align: "center" });
 
-      doc.text("JaguarSoft - Sistema de Gestão de Obras", 10, 290);
+      // Marca Jaguar (direita)
+      doc.setFont("helvetica", "bold");
+      doc.text("JaguarSoft", 195, 290, { align: "right" });
     }
 
-    // =========================
     function novaPagina() {
       footer();
       doc.addPage();
@@ -47,35 +66,72 @@ export default function ExportarPDF({ form }) {
       header();
     }
 
-    function quebra() {
-      if (y > 270) {
+    function quebra(linha = 8) {
+      if (y + linha > 270) {
         novaPagina();
       }
     }
 
+    // =========================
+    // SEÇÃO (COM DESTAQUE)
+    // =========================
     function secao(titulo) {
+
+      quebra(12);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+
+      doc.setFillColor(240, 240, 240);
+      doc.rect(marginLeft, y - 4, 180, 8, "F");
+
+      doc.text(titulo, marginLeft + 2, y);
+
+      y += 8;
+    }
+
+    // =========================
+    // CAMPO EM DUAS COLUNAS
+    // =========================
+    function campo2col(label1, val1, label2, val2) {
+
       quebra();
 
-      doc.setFontSize(12);
       doc.setFont("helvetica", "bold");
-      doc.text(titulo, 10, y);
-      y += 8;
+      doc.text(label1, marginLeft, y);
 
-      doc.setLineWidth(0.3);
-      doc.line(10, y, 200, y);
+      doc.setFont("helvetica", "normal");
+      doc.text(String(val1 || "-"), marginLeft + 35, y);
+
+      if (label2) {
+        doc.setFont("helvetica", "bold");
+        doc.text(label2, 110, y);
+
+        doc.setFont("helvetica", "normal");
+        doc.text(String(val2 || "-"), 150, y);
+      }
+
       y += 6;
     }
 
-    function campo(label, valor) {
-      quebra();
+    // =========================
+    // TEXTO GRANDE (QUEBRA LINHA)
+    // =========================
+    function textoGrande(label, valor) {
+
+      quebra(10);
 
       doc.setFont("helvetica", "bold");
-      doc.text(label, 10, y);
+      doc.text(label, marginLeft, y);
+
+      y += 5;
 
       doc.setFont("helvetica", "normal");
-      doc.text(String(valor || "-"), 70, y);
 
-      y += 6;
+      const texto = doc.splitTextToSize(valor || "-", 180);
+      doc.text(texto, marginLeft, y);
+
+      y += texto.length * 5;
     }
 
     // =========================
@@ -84,114 +140,104 @@ export default function ExportarPDF({ form }) {
     header();
 
     // =========================
-    // IDENTIFICAÇÃO
+    // 1. IDENTIFICAÇÃO
     // =========================
     secao("1. Identificação");
 
-    campo("Obra:", form.obra);
-    campo("Contrato:", form.contrato);
-    campo("RDO:", form.rdoNum);
-    campo("Responsável:", form.responsavel);
-    campo("Empresa:", form.empresa);
-    campo("Cliente:", form.cliente);
-    campo("Endereço:", form.endereco);
-    campo("Data:", form.data);
-    campo("Dia:", form.diaSemana);
+    campo2col("Obra:", form.obra, "Contrato:", form.contrato);
+    campo2col("RDO:", form.rdoNum, "Responsável:", form.responsavel);
+    campo2col("Empresa:", form.empresa, "Cliente:", form.cliente);
+    campo2col("Data:", form.data, "Dia:", form.diaSemana);
+
+    textoGrande("Endereço:", form.endereco);
 
     // =========================
-    // LOCALIZAÇÃO
+    // 2. LOCALIZAÇÃO
     // =========================
     secao("2. Localização");
 
-    campo("Latitude:", form.latitude);
-    campo("Longitude:", form.longitude);
+    campo2col("Latitude:", form.latitude, "Longitude:", form.longitude);
 
     if (form.latitude && form.longitude) {
-      quebra();
 
-      const mapUrl = `https://static-maps.yandex.ru/1.x/?lang=pt_BR&ll=${form.longitude},${form.latitude}&z=16&size=600,300&l=map&pt=${form.longitude},${form.latitude},pm2rdm`;
+      quebra(90);
 
-      doc.addImage(mapUrl, "JPEG", 10, y, 190, 80);
+      const mapUrl = `https://static-maps.yandex.ru/1.x/?lang=pt_BR&ll=${form.longitude},${form.latitude}&z=16&size=650,300&l=map&pt=${form.longitude},${form.latitude},pm2rdm`;
+
+      doc.addImage(mapUrl, "JPEG", marginLeft, y, 180, 80);
       y += 85;
     }
 
     // =========================
-    // CLIMA
+    // 3. CLIMA
     // =========================
     secao("3. Clima");
 
-    campo("Temp Min:", form.tempMin);
-    campo("Temp Max:", form.tempMax);
-    campo("Umidade:", form.umidade);
-    campo("Clima:", form.clima.join(", "));
+    campo2col("Clima:", form.clima.join(", "));
+
+    textoGrande("Impacto:", form.impactoClima);
 
     // =========================
-    // MÃO DE OBRA
+    // 4. MÃO DE OBRA
     // =========================
     secao("4. Mão de Obra");
 
     form.maoDeObra.forEach(m => {
-      campo("Nome:", m.nome);
-      campo("Função:", m.funcao);
-      campo("Qtd:", m.qtd);
-      y += 2;
+      campo2col("Função:", m.funcao, "Qtd:", m.qtd);
     });
 
     // =========================
-    // EQUIPAMENTOS
+    // 5. EQUIPAMENTOS
     // =========================
     secao("5. Equipamentos");
 
     form.equipamentos.forEach(e => {
-      campo("Equipamento:", e.nome);
-      campo("Qtd:", e.qtd);
-      y += 2;
+      campo2col("Equipamento:", e.nome, "Qtd:", e.qtd);
     });
 
     // =========================
-    // ATIVIDADES
+    // 6. ATIVIDADES
     // =========================
     secao("6. Atividades");
 
     form.atividades.forEach(a => {
-      campo("-", a);
+      textoGrande("-", a);
     });
 
     // =========================
-    // OCORRÊNCIAS
+    // 7. OCORRÊNCIAS
     // =========================
     secao("7. Ocorrências");
 
-    campo("Tipos:", form.ocorrencias.join(", "));
-    campo("Descrição:", form.ocorrenciaDesc);
+    campo2col("Tipos:", form.ocorrencias.join(", "));
+    textoGrande("Descrição:", form.ocorrenciaDesc);
 
     // =========================
-    // SEGURANÇA
+    // 8. SEGURANÇA
     // =========================
     secao("8. Segurança");
 
-    campo("DDS:", form.dds);
-    campo("Qtd DDS:", form.ddsQtd);
-    campo("Tema DDS:", form.ddsTema);
-    campo("EPIs:", form.epis);
-    campo("Obs:", form.segObs);
+    campo2col("DDS:", form.dds, "Qtd:", form.ddsQtd);
+    campo2col("Tema:", form.ddsTema, "EPIs:", form.epis);
+
+    textoGrande("Observações:", form.segObs);
 
     // =========================
-    // OBSERVAÇÕES
+    // 9. OBSERVAÇÕES
     // =========================
     secao("9. Observações");
 
-    campo("Gerais:", form.obsGerais);
-    campo("Próximas:", form.proximas);
-    campo("Pendentes:", form.pendentes);
-    campo("Comunicados:", form.comunicados);
+    textoGrande("Gerais:", form.obsGerais);
+    textoGrande("Próximas:", form.proximas);
+    textoGrande("Pendentes:", form.pendentes);
+    textoGrande("Comunicados:", form.comunicados);
 
     // =========================
-    // FOTOS (GRID PROFISSIONAL)
+    // 10. FOTOS (GRID)
     // =========================
     secao("10. Fotos");
 
-    let x = 10;
+    let x = marginLeft;
     let col = 0;
 
     for (let i = 0; i < form.fotos.length; i++) {
@@ -201,15 +247,15 @@ export default function ExportarPDF({ form }) {
         y = 30;
       }
 
-      doc.addImage(form.fotos[i].url, "JPEG", x, y, 60, 45);
+      doc.addImage(form.fotos[i].url, "JPEG", x, y, 55, 40);
 
       col++;
-      x += 65;
+      x += 60;
 
       if (col === 3) {
         col = 0;
-        x = 10;
-        y += 50;
+        x = marginLeft;
+        y += 45;
       }
     }
 

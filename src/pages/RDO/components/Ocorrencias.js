@@ -9,7 +9,7 @@ export default function Ocorrencias({ form, updateArray, updateField }) {
 
   return (
     <div className="section">
-      <h2>6. Ocorrências</h2>
+      <h2>7. Ocorrências</h2>
 
       {tipos.map(o => (
         <label key={o}>

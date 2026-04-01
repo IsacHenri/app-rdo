@@ -22,18 +22,18 @@ export default function Atividades({ form, setForm }) {
 
   return (
     <div className="section">
-      <h2>5. Atividades</h2>
+      <h2>6. Atividades</h2>
 
       {form.atividades.map((a, i) => (
         <div key={i}>
           <input placeholder="Descrição"
             onChange={ev => update(i, ev.target.value)} />
 
-          <button onClick={() => remove(i)}>X</button>
+          <button className="row-del" onClick={() => remove(i)}>X</button>
         </div>
       ))}
 
-      <button onClick={add}>+ Adicionar</button>
+      <button className="btn-add" onClick={add}>+ Adicionar</button>
     </div>
   );
 }
