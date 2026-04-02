@@ -101,6 +101,7 @@ export default function RDOForm() {
       .filter(a => a) // remove vazio/null
       .join(";");
 
+
     const ensolarado = form.clima.includes("Ensolarado");
     const chuva = form.clima.includes("Chuva");
     const nublado = form.clima.includes("Nublado");
@@ -141,9 +142,11 @@ export default function RDOForm() {
       ocorrenciaDesc: form.ocorrenciaDesc,
 
       dds: form.dds,
+
       qtdDds: form.ddsQtd && !isNaN(form.ddsQtd)
         ? Number(form.ddsQtd)
         : null,
+
       temaDds: form.ddsTema,
       epis: form.epis,
       observacoesSeguranca: form.segObs,
@@ -174,6 +177,7 @@ export default function RDOForm() {
       console.log(pair[0], pair[1]);
     }
 
+
     const response = await fetch("http://localhost:8080/ordem-servico", {
       method: "POST",
       body: formData
@@ -195,6 +199,7 @@ export default function RDOForm() {
 }
 
   return (
+
     <div className="rdo-container">
 
       <Identificacao form={form} updateField={updateField} />

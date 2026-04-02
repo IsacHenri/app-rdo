@@ -2,7 +2,6 @@ export default function Seguranca({ form, updateField }) {
   return (
     <div className="section">
       <h2>8. Segurança</h2>
-
       <input
         placeholder="DDS"
         value={form.dds}

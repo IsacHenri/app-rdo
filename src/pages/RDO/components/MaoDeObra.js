@@ -24,6 +24,17 @@ export default function MaoDeObra({ form, setForm }) {
     }));
   }
 
+
+  function clearAll() {
+    if (form.maoDeObra.length === 0) return;
+    if (window.confirm("Tem certeza de que deseja excluir todas as entradas de mão de obra?")) {
+      setForm(prev => ({
+        ...prev,
+        maoDeObra: []
+      }));
+    }
+  }
+
   return (
     <div className="section">
       <h2>4. Mão de Obra</h2>
@@ -53,9 +64,19 @@ export default function MaoDeObra({ form, setForm }) {
         </div>
       ))}
 
-      <button className="btn-add" onClick={add}>
-        + Adicionar
-      </button>
+      <div style={{ display: "flex", gap: "8px", marginTop: 8 }}>
+        <button className="btn-add" onClick={add}>
+          + Adicionar
+        </button>
+
+        <button
+          className="btn-clear-all"
+          onClick={clearAll}
+          disabled={form.maoDeObra.length === 0}
+        >
+          🗑 Excluir tudo
+        </button>
+      </div>
     </div>
   );
 }

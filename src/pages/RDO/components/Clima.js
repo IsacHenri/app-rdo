@@ -22,6 +22,7 @@ export default function Clima({ form, updateField, updateArray }) {
 
               <input
                 type="checkbox"
+                className="hidden-checkbox"
                 checked={ativo}
                 onChange={(e) =>
                   updateArray("clima", c.value, e.target.checked)

@@ -17,11 +17,22 @@ export default function Equipamentos({ form, setForm }) {
   function update(i, field, value) {
     const arr = [...form.equipamentos];
     arr[i][field] = value;
-
     setForm(prev => ({
       ...prev,
       equipamentos: arr
     }));
+  }
+
+
+  function clearAll() {
+    if (form.equipamentos.length === 0) return;
+
+    if (window.confirm("Tem certeza que deseja excluir todos os equipamentos?")) {
+      setForm(prev => ({
+        ...prev,
+        equipamentos: []
+      }));
+    }
   }
 
   return (
@@ -53,9 +64,20 @@ export default function Equipamentos({ form, setForm }) {
         </div>
       ))}
 
-      <button className="btn-add" onClick={add}>
-        + Adicionar
-      </button>
+      <div style={{ display: "flex", gap: "8px", marginTop: 8 }}>
+        <button className="btn-add" onClick={add}>
+          + Adicionar
+        </button>
+
+        <button
+          className="btn-clear-all"
+          onClick={clearAll}
+          disabled={form.equipamentos.length === 0}
+        >
+          🗑 Excluir tudo
+        </button>
+      </div>
+
     </div>
   );
 }
