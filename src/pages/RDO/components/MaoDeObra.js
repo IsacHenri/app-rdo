@@ -7,13 +7,6 @@ export default function MaoDeObra({ form, setForm }) {
     }));
   }
 
-  function remove(i) {
-    setForm(prev => ({
-      ...prev,
-      maoDeObra: prev.maoDeObra.filter((_, idx) => idx !== i)
-    }));
-  }
-
   function update(i, field, value) {
     const arr = [...form.maoDeObra];
     arr[i][field] = value;
@@ -22,6 +15,16 @@ export default function MaoDeObra({ form, setForm }) {
       ...prev,
       maoDeObra: arr
     }));
+  }
+
+  function clearAll() {
+    if (form.maoDeObra.length === 0) return;
+    if (window.confirm("Tem certeza de que deseja excluir todas as entradas de mão de obra?")) {
+      setForm(prev => ({
+        ...prev,
+        maoDeObra: []
+      }));
+    }
   }
 
   return (
@@ -43,19 +46,22 @@ export default function MaoDeObra({ form, setForm }) {
             onChange={(e) => update(i, "qtd", e.target.value)}
           />
 
-          <button
-            className="row-del"
-            onClick={() => remove(i)}
-          >
-            ✖
-          </button>
-
         </div>
       ))}
 
-      <button className="btn-add" onClick={add}>
-        + Adicionar
-      </button>
+      <div style={{ display: "flex", gap: "8px", marginTop: 8 }}>
+        <button className="btn-add" onClick={add}>
+          + Adicionar
+        </button>
+
+        <button
+          className="btn-clear-all"
+          onClick={clearAll}
+          disabled={form.maoDeObra.length === 0}
+        >
+          🗑 Excluir tudo
+        </button>
+      </div>
     </div>
   );
 }

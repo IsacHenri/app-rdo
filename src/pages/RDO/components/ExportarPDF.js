@@ -233,31 +233,62 @@ export default function ExportarPDF({ form }) {
     textoGrande("Comunicados:", form.comunicados);
 
     // =========================
-    // 10. FOTOS (GRID)
-    // =========================
-    secao("10. Fotos");
+// 10. FOTOS (GRID PROFISSIONAL)
+// =========================
+secao("10. Fotos");
 
-    let x = marginLeft;
-    let col = 0;
+const imgWidth = 55;
+const imgHeight = 40;
+const gap = 5;
 
-    for (let i = 0; i < form.fotos.length; i++) {
+const pageWidth = 210;
+const usableWidth = pageWidth - (marginLeft * 2);
+const maxCols = Math.floor(usableWidth / (imgWidth + gap));
 
-      if (y > 240) {
-        novaPagina();
-        y = 30;
-      }
+let col = 0;
+let x = marginLeft;
 
-      doc.addImage(form.fotos[i].url, "JPEG", x, y, 55, 40);
+for (let i = 0; i < form.fotos.length; i++) {
 
-      col++;
-      x += 60;
+  const foto = form.fotos[i];
 
-      if (col === 3) {
-        col = 0;
-        x = marginLeft;
-        y += 45;
-      }
-    }
+  // QUEBRA DE PÁGINA
+  if (y + imgHeight > 270) {
+    novaPagina();
+    y = 30;
+    x = marginLeft;
+    col = 0;
+  }
+
+  try {
+    // ✅ CONVERTE FILE → BASE64
+    const base64 = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(foto.file);
+      reader.onload = () => resolve(reader.result);
+    });
+
+    // ✅ DETECTA FORMATO
+    let formato = "JPEG";
+    if (base64.includes("image/png")) formato = "PNG";
+    if (base64.includes("image/webp")) formato = "WEBP";
+
+    doc.addImage(base64, formato, x, y, imgWidth, imgHeight);
+
+  } catch (e) {
+    console.error("Erro imagem:", e);
+  }
+
+  col++;
+
+  if (col < maxCols) {
+    x += imgWidth + gap;
+  } else {
+    col = 0;
+    x = marginLeft;
+    y += imgHeight + gap;
+  }
+}
 
     // =========================
     // FINAL

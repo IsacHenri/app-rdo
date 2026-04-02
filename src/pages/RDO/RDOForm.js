@@ -172,7 +172,7 @@ export default function RDOForm() {
       console.log(pair[0], pair[1]);
     }
 
-    const response = await fetch("http://localhost:8080/ordem-servico", {
+    const response = await fetch("https://nonconjugally-superexcrescent-tomeka.ngrok-free.dev/ordem-servico", {
       method: "POST",
       body: formData
     });
@@ -193,6 +193,7 @@ export default function RDOForm() {
 }
 
   return (
+    
     <div className="rdo-container">
 
       <Identificacao form={form} updateField={updateField} />

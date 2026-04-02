@@ -7,17 +7,25 @@ export default function Equipamentos({ form, setForm }) {
     }));
   }
 
-  function remove(i) {
-    setForm(prev => ({
-      ...prev,
-      equipamentos: prev.equipamentos.filter((_, idx) => idx !== i)
-    }));
-  }
-
   function update(i, value) {
     const arr = [...form.equipamentos];
     arr[i].nome = value;
-    setForm(prev => ({ ...prev, equipamentos: arr }));
+
+    setForm(prev => ({
+      ...prev,
+      equipamentos: arr
+    }));
+  }
+
+  function clearAll() {
+    if (form.equipamentos.length === 0) return;
+
+    if (window.confirm("Tem certeza que deseja excluir todos os equipamentos?")) {
+      setForm(prev => ({
+        ...prev,
+        equipamentos: []
+      }));
+    }
   }
 
   return (
@@ -25,15 +33,30 @@ export default function Equipamentos({ form, setForm }) {
       <h2>5. Equipamentos</h2>
 
       {form.equipamentos.map((e, i) => (
-        <div key={i}>
-          <input placeholder="Equipamento"
-            onChange={ev => update(i, ev.target.value)} />
+        <div key={i} className="row-flex">
 
-          <button className="row-del" onClick={() => remove(i)}>X</button>
+          <input
+            placeholder="Equipamento"
+            value={e.nome}
+            onChange={(ev) => update(i, ev.target.value)}
+          />
+
         </div>
       ))}
 
-      <button className="btn-add" onClick={add}>+ Adicionar</button>
+      <div style={{ display: "flex", gap: "8px", marginTop: 8 }}>
+        <button className="btn-add" onClick={add}>
+          + Adicionar
+        </button>
+
+        <button
+          className="btn-clear-all"
+          onClick={clearAll}
+          disabled={form.equipamentos.length === 0}
+        >
+          🗑 Excluir tudo
+        </button>
+      </div>
     </div>
   );
 }

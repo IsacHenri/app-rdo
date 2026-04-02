@@ -1,11 +1,12 @@
-import { useEffect } from "react";
 
 export default function Fotos({ form, setForm }) {
 
   function handleFiles(files) {
+
     const novas = Array.from(files).map(file => ({
       file,
-      url: URL.createObjectURL(file)
+      nome: file.name,
+      tipo: file.type
     }));
 
     setForm(prev => ({
@@ -15,62 +16,52 @@ export default function Fotos({ form, setForm }) {
   }
 
   function removerFoto(index) {
-    setForm(prev => {
-      const novas = [...prev.fotos];
-
-      URL.revokeObjectURL(novas[index].url);
-      novas.splice(index, 1);
-
-      return {
-        ...prev,
-        fotos: novas
-      };
-    });
+    setForm(prev => ({
+      ...prev,
+      fotos: prev.fotos.filter((_, i) => i !== index)
+    }));
   }
-
-  // 🔥 evita memory leak
-  useEffect(() => {
-    return () => {
-      form.fotos.forEach(f => URL.revokeObjectURL(f.url));
-    };
-  }, [form.fotos]);
 
   return (
     <div className="section">
-      <h2>Fotos</h2>
 
+      <div className="section-header">
+        <h2>Fotos</h2>
+      </div>
+
+      {/* INPUT */}
       <input
         type="file"
         multiple
-        accept="image/*"
+        accept="image/png, image/jpeg, image/jpg, image/webp"
         onChange={(e) => handleFiles(e.target.files)}
       />
 
-      <div className="photo-grid">
+      {/* LISTA DE ARQUIVOS */}
+      <div className="file-list">
+
+        {form.fotos.length === 0 && (
+          <p className="empty">Nenhuma foto adicionada</p>
+        )}
+
         {form.fotos.map((f, i) => (
-          <div key={i} style={{ position: "relative" }}>
-            <img src={f.url} alt="foto" />
+          <div key={i} className="file-item">
+
+            <div className="file-info">
+              📷 {f.nome}
+            </div>
 
             <button
               type="button"
+              className="btn-remove"
               onClick={() => removerFoto(i)}
-              style={{
-                position: "absolute",
-                top: 5,
-                right: 5,
-                background: "red",
-                color: "#fff",
-                border: "none",
-                borderRadius: "50%",
-                width: 25,
-                height: 25,
-                cursor: "pointer"
-              }}
             >
               ✕
             </button>
+
           </div>
         ))}
+
       </div>
     </div>
   );

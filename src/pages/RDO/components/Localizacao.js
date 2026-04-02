@@ -55,7 +55,7 @@ export default function Localizacao({ form, setForm }) {
         <h2>2. Localização</h2>
       </div>
 
-      <button type="button" onClick={pegarLocalizacao}>
+      <button className="btn-localizacao" type="button" onClick={pegarLocalizacao}>
         📡 Obter Localização
       </button>
 
